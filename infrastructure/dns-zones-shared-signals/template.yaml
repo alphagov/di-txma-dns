@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  Creates the necessary DNS zones in the Shared Signals account
+
+Parameters:
+  Environment:
+    Description: The environment type
+    Type: String
+    AllowedValues:
+      - build
+      - staging
+      - integration
+      - production
+
+Conditions:
+  IsProduction: !Equals
+    - !Ref Environment
+    - production
+
+Resources:
+  SharedSignalsMockReceiverApiPublicHostedZone:
+    Type: AWS::Route53::HostedZone
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !If
+        - IsProduction
+        - shared-signals-mock-receiver.transaction.account.gov.uk
+        - !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+  SharedSignalsTransmitterApiPublicHostedZone:
+    Type: AWS::Route53::HostedZone
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !If
+        - IsProduction
+        - shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub shared-signals-transmitter.transaction.${Environment}.account.gov.uk
+
+Outputs:
+  SharedSignalsMockReceiverApiPublicHostedZoneNameServers:
+    Value: !Join
+      - ','
+      - !GetAtt SharedSignalsMockReceiverApiPublicHostedZone.NameServers
+  SharedSignalsMockReceiverApiPublicHostedZoneId:
+    Value: !GetAtt SharedSignalsMockReceiverApiPublicHostedZone.Id
+    Export:
+      Name: SharedSignalsMockReceiverApiPublicHostedZoneId
+
+  SharedSignalsTransmitterApiPublicHostedZoneNameServers:
+    Value: !Join
+      - ','
+      - !GetAtt SharedSignalsTransmitterApiPublicHostedZone.NameServers
+  SharedSignalsTransmitterApiPublicHostedZoneId:
+    Value: !GetAtt SharedSignalsTransmitterApiPublicHostedZone.Id
+    Export:
+      Name: SharedSignalsTransmitterApiPublicHostedZoneId
