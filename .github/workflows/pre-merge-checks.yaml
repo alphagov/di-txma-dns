@@ -1,4 +1,4 @@
-name: Validate templates, linting and tests
+name: Validate & lint templates
 
 on:
   pull_request:
