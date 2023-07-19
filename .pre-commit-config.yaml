@@ -21,3 +21,4 @@ repos:
     hooks:
       - id: checkov_diff
         entry: checkov --framework cloudformation -f
+        files: template\.yaml$
