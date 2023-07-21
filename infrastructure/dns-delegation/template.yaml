@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: |
-  Creates the necessary DNS records for to delegate DNS to sub-domains in the audit and query results accounts
+  Creates the necessary DNS records for to delegate DNS to sub-domains in the audit, query results and shared signals accounts
 
 Parameters:
   Environment:
@@ -60,5 +60,33 @@ Resources:
       ResourceRecords: !Split
         - ','
         - !ImportValue MockServerPublicHostedZoneNameServers
+      TTL: '300'
+      Type: NS
+
+  SharedSignalsMockReceiverApiDnsDelegation:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue RootPublicHostedZoneId
+      Name: !If
+        - IsProduction
+        - shared-signals-mock-receiver.transaction.account.gov.uk
+        - !Sub 'shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk'
+      ResourceRecords: !Split
+        - ','
+        - !ImportValue SharedSignalsMockReceiverApiPublicHostedZoneNameServers
+      TTL: '300'
+      Type: NS
+
+  SharedSignalsTransmitterApiDnsDelegation:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue RootPublicHostedZoneId
+      Name: !If
+        - IsProduction
+        - shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub 'shared-signals-transmitter.transaction.${Environment}.account.gov.uk'
+      ResourceRecords: !Split
+        - ','
+        - !ImportValue SharedSignalsTransmitterApiPublicHostedZoneNameServers
       TTL: '300'
       Type: NS

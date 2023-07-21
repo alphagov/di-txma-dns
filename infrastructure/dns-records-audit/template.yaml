@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: |
-  Creates the necessary DNS records, certificates and domain names for the query results account
+  Creates the necessary DNS records, certificates and domain names for the query results and shared signals accounts
 
 Parameters:
   Environment:
@@ -109,3 +109,97 @@ Resources:
       Name: MockServerDomainName
       Type: String
       Value: !Ref MockServerDomainName
+
+  # Shared Signals Mock Receiver Api records
+  SharedSignalsMockReceiverApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - shared-signals-mock-receiver.transaction.account.gov.uk
+        - !Sub 'shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk'
+      DomainValidationOptions:
+        - DomainName: !If
+            - IsProduction
+            - shared-signals-mock-receiver.transaction.account.gov.uk
+            - !Sub 'shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk'
+          HostedZoneId: !ImportValue SharedSignalsMockReceiverApiPublicHostedZoneId
+      ValidationMethod: DNS
+
+  SharedSignalsMockReceiverApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - shared-signals-mock-receiver.transaction.account.gov.uk
+        - !Sub 'shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref SharedSignalsMockReceiverApiCertificate
+      SecurityPolicy: TLS_1_2
+
+  SharedSignalsMockReceiverApiAliasRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt SharedSignalsMockReceiverApiDomainName.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt SharedSignalsMockReceiverApiDomainName.RegionalHostedZoneId
+      HostedZoneId: !ImportValue SharedSignalsMockReceiverApiPublicHostedZoneId
+      Name: !Ref SharedSignalsMockReceiverApiDomainName
+      Type: A
+
+  SharedSignalsMockReceiverApiDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: SharedSignalsMockReceiverApiDomainName
+      Type: String
+      Value: !Ref SharedSignalsMockReceiverApiDomainName
+
+  # Shared Signals Transmitter Api records
+  SharedSignalsTransmitterApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub 'shared-signals-transmitter.transaction.${Environment}.account.gov.uk'
+      DomainValidationOptions:
+        - DomainName: !If
+            - IsProduction
+            - shared-signals-transmitter.transaction.account.gov.uk
+            - !Sub 'shared-signals-transmitter.transaction.${Environment}.account.gov.uk'
+          HostedZoneId: !ImportValue SharedSignalsTransmitterApiPublicHostedZoneId
+      ValidationMethod: DNS
+
+  SharedSignalsTransmitterApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub 'shared-signals-transmitter.transaction.${Environment}.account.gov.uk'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref SharedSignalsTransmitterApiCertificate
+      SecurityPolicy: TLS_1_2
+
+  SharedSignalsTransmitterApiAliasRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt SharedSignalsTransmitterApiDomainName.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt SharedSignalsTransmitterApiDomainName.RegionalHostedZoneId
+      HostedZoneId: !ImportValue SharedSignalsTransmitterApiPublicHostedZoneId
+      Name: !Ref SharedSignalsTransmitterApiDomainName
+      Type: A
+
+  SharedSignalsTransmitterApiDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: SharedSignalsTransmitterApiDomainName
+      Type: String
+      Value: !Ref SharedSignalsTransmitterApiDomainName
