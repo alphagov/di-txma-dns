@@ -28,12 +28,12 @@ Resources:
       DomainName: !If
         - IsProduction
         - zendesk.transaction.account.gov.uk
-        - !Sub "zendesk.transaction.${Environment}.account.gov.uk"
+        - !Sub 'zendesk.transaction.${Environment}.account.gov.uk'
       DomainValidationOptions:
         - DomainName: !If
             - IsProduction
             - zendesk.transaction.account.gov.uk
-            - !Sub "zendesk.transaction.${Environment}.account.gov.uk"
+            - !Sub 'zendesk.transaction.${Environment}.account.gov.uk'
           HostedZoneId: !ImportValue ZendeskWebhookApiPublicHostedZoneId
       ValidationMethod: DNS
 
@@ -43,7 +43,7 @@ Resources:
       DomainName: !If
         - IsProduction
         - zendesk.transaction.account.gov.uk
-        - !Sub "zendesk.transaction.${Environment}.account.gov.uk"
+        - !Sub 'zendesk.transaction.${Environment}.account.gov.uk'
       EndpointConfiguration:
         Types:
           - REGIONAL
@@ -73,9 +73,9 @@ Resources:
     Type: AWS::CertificateManager::Certificate
     Condition: IsBuild
     Properties:
-      DomainName: !Sub "mockserver.transaction.${Environment}.account.gov.uk"
+      DomainName: !Sub 'mockserver.transaction.${Environment}.account.gov.uk'
       DomainValidationOptions:
-        - DomainName: !Sub "mockserver.transaction.${Environment}.account.gov.uk"
+        - DomainName: !Sub 'mockserver.transaction.${Environment}.account.gov.uk'
           HostedZoneId: !ImportValue MockServerPublicHostedZoneId
       ValidationMethod: DNS
 
@@ -83,7 +83,7 @@ Resources:
     Type: AWS::ApiGateway::DomainName
     Condition: IsBuild
     Properties:
-      DomainName: !Sub "mockserver.transaction.${Environment}.account.gov.uk"
+      DomainName: !Sub 'mockserver.transaction.${Environment}.account.gov.uk'
       EndpointConfiguration:
         Types:
           - REGIONAL
