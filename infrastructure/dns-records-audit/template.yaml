@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: |
-  Creates the necessary DNS records, certificates and domain names for the query results account
+  Creates the necessary DNS records, certificates and domain names for the audit account
 
 Parameters:
   Environment:
