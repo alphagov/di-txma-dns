@@ -16,17 +16,18 @@ Conditions:
   IsProduction: !Equals
     - !Ref Environment
     - production
+  MockReceiverCustomDomain: !Or
+    - !Equals [!Ref Environment, staging]
+    - !Equals [!Ref Environment, build]
 
 Resources:
   SharedSignalsMockReceiverApiPublicHostedZone:
+    Condition: MockReceiverCustomDomain
     Type: AWS::Route53::HostedZone
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      Name: !If
-        - IsProduction
-        - shared-signals-mock-receiver.transaction.account.gov.uk
-        - !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+      Name: !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
   SharedSignalsTransmitterApiPublicHostedZone:
     Type: AWS::Route53::HostedZone
     DeletionPolicy: Retain
@@ -39,10 +40,12 @@ Resources:
 
 Outputs:
   SharedSignalsMockReceiverApiPublicHostedZoneNameServers:
+    Condition: MockReceiverCustomDomain
     Value: !Join
       - ','
       - !GetAtt SharedSignalsMockReceiverApiPublicHostedZone.NameServers
   SharedSignalsMockReceiverApiPublicHostedZoneId:
+    Condition: MockReceiverCustomDomain
     Value: !GetAtt SharedSignalsMockReceiverApiPublicHostedZone.Id
     Export:
       Name: SharedSignalsMockReceiverApiPublicHostedZoneId
