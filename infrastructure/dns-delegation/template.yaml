@@ -29,6 +29,9 @@ Conditions:
   IsBuild: !Equals
     - !Ref Environment
     - build
+  MockReceiverCustomDomain: !Or
+    - !Equals [!Ref Environment, staging]
+    - !Equals [!Ref Environment, build]
 
 Resources:
   ZendeskWebhookApiDnsDelegation:
@@ -70,13 +73,11 @@ Resources:
       Type: NS
 
   SharedSignalsMockReceiverApiDnsDelegation:
+    Condition: MockReceiverCustomDomain
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !ImportValue RootPublicHostedZoneId
-      Name: !If
-        - IsProduction
-        - shared-signals-mock-receiver.transaction.account.gov.uk
-        - !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+      Name: !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
       ResourceRecords: !Ref SharedSignalsMockReceiverApiPublicHostedZoneNameServers
       TTL: '300'
       Type: NS
