@@ -17,8 +17,64 @@ Conditions:
   IsProduction: !Equals
     - !Ref Environment
     - production
+  MockReceiverCustomDomain: !Or
+    - !Equals
+        - !Ref Environment
+        - build
+    - !Equals
+        - !Ref Environment
+        - staging
 
 Resources:
+  ##################
+  # Mock Receiver  #
+  ##################
+
+  SharedSignalsMockReceiverApiCertificate:
+    Condition: MockReceiverCustomDomain
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+      DomainValidationOptions:
+        - DomainName: !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+          HostedZoneId: !ImportValue SharedSignalsMockReceiverApiPublicHostedZoneId
+      ValidationMethod: DNS
+
+  SharedSignalsMockReceiverApiDomainName:
+    Condition: MockReceiverCustomDomain
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Sub shared-signals-mock-receiver.transaction.${Environment}.account.gov.uk
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref SharedSignalsMockReceiverApiCertificate
+      SecurityPolicy: TLS_1_2
+
+  SharedSignalsMockReceiverApiAliasRecord:
+    Condition: MockReceiverCustomDomain
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt SharedSignalsMockReceiverApiDomainName.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt SharedSignalsMockReceiverApiDomainName.RegionalHostedZoneId
+      HostedZoneId: !ImportValue SharedSignalsMockReceiverApiPublicHostedZoneId
+      Name: !Ref SharedSignalsMockReceiverApiDomainName
+      Type: A
+
+  SharedSignalsMockReceiverApiDomainNameParameter:
+    Condition: MockReceiverCustomDomain
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: SharedSignalsMockReceiverApiDomainName
+      Type: String
+      Value: !Ref SharedSignalsMockReceiverApiDomainName
+
+  ############
+  # SSF API  #
+  ############
+
   SharedSignalsTransmitterApiCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
