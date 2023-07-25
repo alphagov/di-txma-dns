@@ -37,5 +37,5 @@ jobs:
         with:
           artifact-bucket-name: ${{ secrets.SHARED_SIGNALS_DNS_RECORDS_ARTIFACT_BUCKET_NAME }}
           signing-profile-name: ${{ secrets.SHARED_SIGNALS_SIGNING_PROFILE_NAME }}
-          template-file: infrastructure/dns-records-query-results/template.yaml
+          template-file: infrastructure/dns-records-shared-signals/template.yaml
           working-directory: .
