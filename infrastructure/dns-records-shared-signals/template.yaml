@@ -81,12 +81,12 @@ Resources:
       DomainName: !If
         - IsProduction
         - shared-signals-transmitter.transaction.account.gov.uk
-        - !Sub shared-signals-transmitter.transaction.${Environment}.account.gov.uk
+        - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
       DomainValidationOptions:
         - DomainName: !If
             - IsProduction
             - shared-signals-transmitter.transaction.account.gov.uk
-            - !Sub shared-signals-transmitter.transaction.${Environment}.account.gov.uk
+            - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
           HostedZoneId: !ImportValue SharedSignalsTransmitterApiPublicHostedZoneId
       ValidationMethod: DNS
 
@@ -96,7 +96,7 @@ Resources:
       DomainName: !If
         - IsProduction
         - shared-signals-transmitter.transaction.account.gov.uk
-        - !Sub shared-signals-transmitter.transaction.${Environment}.account.gov.uk
+        - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
       EndpointConfiguration:
         Types:
           - REGIONAL
