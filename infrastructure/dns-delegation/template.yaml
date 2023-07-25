@@ -89,7 +89,7 @@ Resources:
       Name: !If
         - IsProduction
         - shared-signals-transmitter.transaction.account.gov.uk
-        - !Sub shared-signals-transmitter.transaction.${Environment}.account.gov.uk
+        - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
       ResourceRecords: !Ref SharedSignalsTransmitterApiPublicHostedZoneNameServers
       TTL: '300'
       Type: NS
