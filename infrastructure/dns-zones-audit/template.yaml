@@ -31,6 +31,18 @@ Resources:
         - IsProduction
         - transaction.account.gov.uk
         - !Sub 'transaction.${Environment}.account.gov.uk'
+  RootAliasRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref RootPublicHostedZone
+      Name: !If
+        - IsProduction
+        - transaction.account.gov.uk
+        - !Sub 'transaction.${Environment}.account.gov.uk'
+      ResourceRecords:
+        - 1.1.1.1
+      Type: A
+
   ZendeskWebhookApiPublicHostedZone:
     Type: AWS::Route53::HostedZone
     DeletionPolicy: Retain
