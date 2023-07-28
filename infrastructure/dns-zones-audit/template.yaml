@@ -41,6 +41,7 @@ Resources:
         - !Sub 'transaction.${Environment}.account.gov.uk'
       ResourceRecords:
         - 1.1.1.1
+      TTL: 300
       Type: A
 
   ZendeskWebhookApiPublicHostedZone:
