@@ -38,6 +38,15 @@ Resources:
         - IsProduction
         - shared-signals-transmitter.transaction.account.gov.uk
         - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
+  SharedSignalsTransmitterCognitoPublicHostedZone:
+    Type: AWS::Route53::HostedZone
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !If
+        - IsProduction
+        - auth.shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub auth.ssf-transmitter.transaction.${Environment}.account.gov.uk
 
 Outputs:
   SharedSignalsMockReceiverApiPublicHostedZoneNameServers:
@@ -59,3 +68,8 @@ Outputs:
     Value: !GetAtt SharedSignalsTransmitterApiPublicHostedZone.Id
     Export:
       Name: SharedSignalsTransmitterApiPublicHostedZoneId
+
+  SharedSignalsTransmitterCognitoPublicHostedZoneId:
+    Value: !GetAtt SharedSignalsTransmitterCognitoPublicHostedZone.Id
+    Export:
+      Name: SharedSignalsTransmitterCognitoPublicHostedZoneId

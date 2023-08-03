@@ -120,3 +120,36 @@ Resources:
       Name: SharedSignalsTransmitterApiDomainName
       Type: String
       Value: !Ref SharedSignalsTransmitterApiDomainName
+
+  #########################
+  # SSF Cognito User Pool  #
+  #########################
+
+  SharedSignalsTransmitterCognitoCnameRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue SharedSignalsTransmitterCognitoPublicHostedZoneId
+      Name: !If
+        - IsProduction
+        - auth.shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub auth.ssf-transmitter.transaction.${Environment}.account.gov.uk
+      ResourceRecords: !GetAtt SsfUserPoolDomain.CloudFrontDistribution
+      Type: CNAME
+
+  SsfUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      CustomDomainConfig:
+        CertificateArn: '{{resolve:ssm:CognitoCustomDomainCertificateArn}}'
+      Domain: !If
+        - IsProduction
+        - shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
+      UserPoolId: '{{resolve:ssm:SSFUserPoolId}}'
+
+  CognitoDomainUrlParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: CognitoDomainUrl
+      Type: String
+      Value: !Ref SsfUserPoolDomain
