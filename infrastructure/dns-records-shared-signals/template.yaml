@@ -125,7 +125,7 @@ Resources:
   # SSF Cognito User Pool  #
   #########################
 
-  SharedSignalsTransmitterCognitoDnsDelegation:
+  SharedSignalsTransmitterCognitoCnameRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !ImportValue SharedSignalsTransmitterCognitoPublicHostedZoneId
