@@ -128,7 +128,7 @@ Resources:
   SharedSignalsTransmitterCognitoCnameRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneId: !ImportValue SharedSignalsTransmitterCognitoPublicHostedZoneId
+      HostedZoneId: !ImportValue SharedSignalsTransmitterApiPublicHostedZoneId
       Name: !If
         - IsProduction
         - auth.shared-signals-transmitter.transaction.account.gov.uk
