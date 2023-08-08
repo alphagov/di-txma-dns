@@ -133,7 +133,8 @@ Resources:
         - IsProduction
         - auth.shared-signals-transmitter.transaction.account.gov.uk
         - !Sub auth.ssf-transmitter.transaction.${Environment}.account.gov.uk
-      ResourceRecords: !GetAtt SsfUserPoolDomain.CloudFrontDistribution
+      ResourceRecords:
+        - !GetAtt SsfUserPoolDomain.CloudFrontDistribution
       Type: CNAME
 
   SsfUserPoolDomain:
