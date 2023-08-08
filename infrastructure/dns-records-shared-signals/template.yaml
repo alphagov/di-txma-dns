@@ -136,6 +136,7 @@ Resources:
       ResourceRecords:
         - !GetAtt SsfUserPoolDomain.CloudFrontDistribution
       Type: CNAME
+      TTL: 300
 
   SsfUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
