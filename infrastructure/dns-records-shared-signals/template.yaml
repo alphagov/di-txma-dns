@@ -143,8 +143,8 @@ Resources:
         CertificateArn: '{{resolve:ssm:CognitoCustomDomainCertificateArn}}'
       Domain: !If
         - IsProduction
-        - shared-signals-transmitter.transaction.account.gov.uk
-        - !Sub ssf-transmitter.transaction.${Environment}.account.gov.uk
+        - auth.shared-signals-transmitter.transaction.account.gov.uk
+        - !Sub auth.ssf-transmitter.transaction.${Environment}.account.gov.uk
       UserPoolId: '{{resolve:ssm:SSFUserPoolId}}'
 
   CognitoDomainUrlParameter:
