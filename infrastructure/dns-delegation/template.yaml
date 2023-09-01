@@ -34,6 +34,20 @@ Conditions:
     - !Equals [!Ref Environment, build]
 
 Resources:
+  EventReplayApiDnsDelegation:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue RootPublicHostedZoneId
+      Name: !If
+        - IsProduction
+        - event-replay.transaction.account.gov.uk
+        - !Sub event-replay.transaction.${Environment}.account.gov.uk
+      ResourceRecords: !Split
+        - ','
+        - !ImportValue EventReplayApiPublicHostedZoneNameServers
+      TTL: '300'
+      Type: NS
+
   ZendeskWebhookApiDnsDelegation:
     Type: AWS::Route53::RecordSet
     Properties:
