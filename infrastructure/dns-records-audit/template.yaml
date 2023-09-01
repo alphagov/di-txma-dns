@@ -22,6 +22,54 @@ Conditions:
     - build
 
 Resources:
+  # Event Replay Api records
+  EventReplayApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - event-replay.transaction.account.gov.uk
+        - !Sub 'event-replay.transaction.${Environment}.account.gov.uk'
+      DomainValidationOptions:
+        - DomainName: !If
+            - IsProduction
+            - event-replay.transaction.account.gov.uk
+            - !Sub 'event-replay.transaction.${Environment}.account.gov.uk'
+          HostedZoneId: !ImportValue EventReplayApiPublicHostedZoneId
+      ValidationMethod: DNS
+
+  EventReplayApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !If
+        - IsProduction
+        - event-replay.transaction.account.gov.uk
+        - !Sub 'event-replay.transaction.${Environment}.account.gov.uk'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref EventReplayApiCertificate
+      SecurityPolicy: TLS_1_2
+
+  EventReplayApiAliasRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt EventReplayApiDomainName.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt EventReplayApiDomainName.RegionalHostedZoneId
+      HostedZoneId: !ImportValue EventReplayApiPublicHostedZoneId
+      Name: !Ref EventReplayApiDomainName
+      Type: A
+
+  EventReplayApiDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: EventReplayApiDomainName
+      Type: String
+      Value: !Ref EventReplayApiDomainName
+
+  # Zendesk Webhook Api records
   ZendeskWebhookApiCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
