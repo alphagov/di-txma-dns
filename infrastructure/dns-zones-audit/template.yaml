@@ -44,6 +44,15 @@ Resources:
       TTL: 300
       Type: A
 
+  EventReplayApiPublicHostedZone:
+    Type: AWS::Route53::HostedZone
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !If
+        - IsProduction
+        - event-replay.transaction.account.gov.uk
+        - !Sub 'event-replay.transaction.${Environment}.account.gov.uk'
   ZendeskWebhookApiPublicHostedZone:
     Type: AWS::Route53::HostedZone
     DeletionPolicy: Retain
@@ -62,6 +71,18 @@ Resources:
       Name: !Sub 'mockserver.transaction.${Environment}.account.gov.uk'
 
 Outputs:
+  EventReplayApiPublicHostedZoneId:
+    Value: !GetAtt EventReplayApiPublicHostedZone.Id
+    Export:
+      Name: EventReplayApiPublicHostedZoneId
+
+  EventReplayApiPublicHostedZoneNameServers:
+    Value: !Join
+      - ','
+      - !GetAtt EventReplayApiPublicHostedZone.NameServers
+    Export:
+      Name: EventReplayApiPublicHostedZoneNameServers
+
   MockServerPublicHostedZoneId:
     Condition: IsBuild
     Value: !GetAtt MockServerPublicHostedZone.Id
