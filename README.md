@@ -1,4 +1,4 @@
-# di-txma-dns
+# TxMA DNS
 
 Infrastructure required for TxMA DNS, such as Route 53 Hosted Zones, Records, and any resources required for Custom Domains.
 
