@@ -33,7 +33,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.DNS_DELEGATION_GH_ACTIONS_ROLE_ARN }}
       - name: Package SAM app
-        uses: alphagov/di-devplatform-upload-action@v3.3
+        uses: govuk-one-login/devplatform-upload-action@v3.8.1
         with:
           artifact-bucket-name: ${{ secrets.DNS_DELEGATION_ARTIFACT_BUCKET_NAME }}
           signing-profile-name: ${{ secrets.AUDIT_SIGNING_PROFILE_NAME }}
